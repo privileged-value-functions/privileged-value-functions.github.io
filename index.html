@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Le Critique: Privileged Value Functions for LLM Reinforcement Learning</title>
+  <meta name="description" content="Le Critique introduces Privileged Value Functions (PVF) and TETHER, two complementary strategies for stronger value-function reinforcement learning in large language models.">
+  <meta name="keywords" content="privileged value functions, PVF, TETHER, value functions, reinforcement learning, LLM RL, GRPO, credit assignment">
+  <meta name="author" content="Siddarth Venkatraman, Matthieu Dinot, Laurence Aitchison">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://privileged-value-functions.github.io/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://privileged-value-functions.github.io/">
+  <meta property="og:title" content="Le Critique: Privileged Value Functions for LLM Reinforcement Learning">
+  <meta property="og:description" content="Privileged critics and adaptive group-value baselines for token-level credit assignment in LLM reinforcement learning.">
+  <meta property="og:image" content="https://privileged-value-functions.github.io/static/images/privileged_value_overview.png">
+  <meta property="og:site_name" content="Le Critique">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Le Critique: Privileged Value Functions">
+  <meta name="twitter:description" content="PVF and TETHER improve value-function RL across reasoning tasks.">
+  <meta name="twitter:image" content="https://privileged-value-functions.github.io/static/images/privileged_value_overview.png">
+
+  <meta name="citation_title" content="Le Critique: Privileged Value Functions for LLM Reinforcement Learning">
+  <meta name="citation_author" content="Venkatraman, Siddarth">
+  <meta name="citation_author" content="Dinot, Matthieu">
+  <meta name="citation_author" content="Aitchison, Laurence">
+  <meta name="citation_publication_date" content="2026">
+  <meta name="citation_pdf_url" content="https://arxiv.org/pdf/2608.16739">
+  <meta name="citation_abstract_html_url" content="https://arxiv.org/abs/2608.16739">
+  <meta name="citation_language" content="en">
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="./static/css/site.css">
+  <link rel="icon" href="./static/images/favicon.svg" type="image/svg+xml">
+
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "Le Critique: Privileged Value Functions for LLM Reinforcement Learning",
+    "datePublished": "2026-08-17",
+    "url": "https://privileged-value-functions.github.io/",
+    "sameAs": "https://arxiv.org/abs/2608.16739",
+    "image": "https://privileged-value-functions.github.io/static/images/privileged_value_overview.png",
+    "author": [
+      {"@type": "Person", "name": "Siddarth Venkatraman", "url": "https://hyperpotatoneo.github.io/"},
+      {"@type": "Person", "name": "Matthieu Dinot"},
+      {"@type": "Person", "name": "Laurence Aitchison"}
+    ],
+    "keywords": "privileged value functions, TETHER, value functions, LLM reinforcement learning, token-level credit assignment",
+    "abstract": "We introduce Privileged Value Functions, which condition critics on admissible training-time context hidden from the policy, and TETHER, an adaptive interpolation between group-relative and learned value baselines."
+  }
+  </script>
+</head>
+<body>
+
+<section class="hero publication-header">
+  <div class="hero-body">
+    <div class="container is-max-desktop has-text-centered">
+      <p class="project-kicker">PRIVILEGED VALUE FUNCTIONS</p>
+      <h1 class="title is-1 publication-title">
+        <span class="le-critique">Le Critique</span>: Privileged Value Functions<br class="title-break"> for LLM Reinforcement Learning
+      </h1>
+
+      <div class="is-size-4 publication-authors author-row">
+        <span class="author-block"><a href="https://hyperpotatoneo.github.io/">Siddarth Venkatraman</a><sup>1,2,3</sup></span>
+        <span class="author-block">Matthieu Dinot<sup>1</sup></span>
+        <span class="author-block">Laurence Aitchison<sup>1</sup></span>
+      </div>
+
+      <div class="is-size-6 publication-authors affiliation-row">
+        <span class="author-block"><sup>1</sup><a href="https://mistral.ai/">Mistral AI</a></span>
+        <span class="author-block"><sup>2</sup><a href="https://mila.quebec/">Mila - Quebec AI Institute</a></span>
+        <span class="author-block"><sup>3</sup><a href="https://www.umontreal.ca/en/">Université de Montréal</a></span>
+      </div>
+
+      <p class="correspondence">
+        Correspondence: <a href="mailto:Siddharth.Venkataraman@mila.quebec">Siddharth.Venkataraman@mila.quebec</a>
+      </p>
+
+      <div class="publication-links">
+        <span class="link-block">
+          <a href="https://arxiv.org/pdf/2608.16739" class="external-link button is-normal is-rounded is-dark">
+            <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span>
+          </a>
+        </span>
+        <span class="link-block">
+          <a href="https://arxiv.org/abs/2608.16739" class="external-link button is-normal is-rounded is-dark">
+            <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
+          </a>
+        </span>
+        <span class="link-block">
+          <a href="https://github.com/HyperPotatoNeo/prime-values" class="external-link button is-normal is-rounded is-dark">
+            <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
+          </a>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main>
+  <section class="hero teaser top-figure">
+    <div class="hero-body">
+      <div class="figure-shell figure-shell-wide">
+        <a href="./static/images/privileged_value_overview.png" target="_blank" rel="noopener" aria-label="Open the privileged value function figure at full resolution">
+          <img src="./static/images/privileged_value_overview.png" alt="A privileged value function receives the policy-visible question and partial chain of thought, plus critic-only clues such as a known solution or leave-one-out group responses, then computes a token-level advantage.">
+        </a>
+      </div>
+      <div class="container is-max-desktop">
+        <p class="figure-caption has-text-centered">
+          A privileged critic sees the policy state plus admissible training-time clues, producing a more informative token-level baseline without exposing those clues to the policy.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft" id="overview">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <p class="section-eyebrow">OVERVIEW</p>
+          <h2 class="title is-3">Stronger critics for LLM reinforcement learning</h2>
+          <div class="content has-text-justified lead-copy">
+            <p>Group-relative methods such as GRPO avoid a learned critic, but they provide only sequence-level credit and require multiple rollouts per prompt. Learned value functions offer token-level advantages, yet a poorly fit critic can make training worse.</p>
+            <p><strong>Le Critique</strong> develops two complementary strategies: <span class="pvf-text">Privileged Value Functions (PVF)</span> give the critic useful context hidden from the policy, while <span class="tether-text">TETHER</span> adapts between the dependable group baseline and the learned token-level value baseline.</p>
+          </div>
+        </div>
+      </div>
+      <div class="columns contribution-grid">
+        <div class="column">
+          <article class="contribution-card pvf-card">
+            <span class="method-number">01</span>
+            <h3>Privileged Value Functions</h3>
+            <p>Route admissible training-time information through the critic to improve return prediction and reduce policy-gradient variance.</p>
+          </article>
+        </div>
+        <div class="column">
+          <article class="contribution-card tether-card">
+            <span class="method-number">02</span>
+            <h3>TETHER</h3>
+            <p>Fit an adaptive mixture of leave-one-out group and learned value baselines so the critic contributes only as much as its accuracy warrants.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pvf">
+    <div class="container is-max-desktop">
+      <p class="section-eyebrow pvf-text">METHOD 1</p>
+      <h2 class="title is-3">Privileged Value Functions</h2>
+      <div class="columns is-variable is-7 method-intro">
+        <div class="column is-7">
+          <div class="content">
+            <p>A PVF conditions on the ordinary policy history $h_{i,t}$ and additional critic-only context $z_{i,t}$. If this context is admissible, the stronger baseline can reduce variance while leaving the expected policy gradient unchanged.</p>
+            <div class="equation-panel pvf-equation">
+              \[
+                \begin{aligned}
+                  V^\pi(h_{i,t},z_{i,t})
+                  &= \mathbb{E}[R_i \mid h_{i,t},z_{i,t}], \\
+                  \widehat A^{\mathrm{PVF}}_{i,t}
+                  &= R_i-V_\phi(h_{i,t},z_{i,t}).
+                \end{aligned}
+              \]
+            </div>
+          </div>
+        </div>
+        <div class="column is-5">
+          <aside class="guardrail-card">
+            <p class="guardrail-label">THE CAUSAL GUARDRAIL</p>
+            <p>The critic-only context must not reveal information causally downstream of the current token.</p>
+            <div class="guardrail-equation">$z_{i,t}\;\perp\!\!\!\perp\;y_{i,t}\mid h_{i,t}$</div>
+          </aside>
+        </div>
+      </div>
+
+      <h3 class="title is-5 subheading">What can be privileged?</h3>
+      <div class="columns privilege-grid">
+        <div class="column">
+          <article class="info-card">
+            <span class="info-icon">01</span>
+            <h4>Reference solutions</h4>
+            <p>Oracle answers, proof sketches, gold patches, or other fixed target information that helps judge a partial trajectory.</p>
+          </article>
+        </div>
+        <div class="column">
+          <article class="info-card">
+            <span class="info-icon">02</span>
+            <h4>Leave-one-out groups</h4>
+            <p>Other independently sampled responses and their rewards, turning value prediction into a relative in-context comparison.</p>
+          </article>
+        </div>
+        <div class="column">
+          <article class="info-card">
+            <span class="info-icon">03</span>
+            <h4>Task-side context</h4>
+            <p>Verifier rubrics, detailed task specifications, or latent environment information that satisfies the causal guardrail.</p>
+          </article>
+        </div>
+      </div>
+      <div class="not-allowed">
+        <strong>Not admissible:</strong> future tokens, the current response's realized reward, or later verifier and environment feedback produced by that response.
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft" id="comparison">
+    <div class="container is-max-desktop">
+      <p class="section-eyebrow">OBJECTIVE PRESERVATION</p>
+      <h2 class="title is-3">PVF and self-distillation use privileged information differently</h2>
+      <div class="comparison-grid">
+        <article class="comparison-card pvf-compare">
+          <span class="comparison-label">PVF</span>
+          <h3>Privileged critic</h3>
+          <p>The extra information conditions an auxiliary value model. Under the admissibility condition and Monte Carlo advantages, it can reduce variance without changing the expected policy gradient or the original RL optimum.</p>
+          <p class="tradeoff"><strong>Tradeoff:</strong> it cannot use feedback generated from the completed response itself.</p>
+        </article>
+        <article class="comparison-card distill-compare">
+          <span class="comparison-label">SELF-DISTILLATION</span>
+          <h3>Privileged teacher</h3>
+          <p>The extra information shapes a teacher distribution and introduces a distribution-matching objective, typically a token-level reverse KL. This can change the policy optimum and requires careful information and stability control.</p>
+          <p class="tradeoff"><strong>Advantage:</strong> it can directly exploit retrospective critiques or verifier feedback.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="tether">
+    <div class="container is-max-desktop">
+      <p class="section-eyebrow tether-text">METHOD 2</p>
+      <h2 class="title is-3">TETHER: an adaptive group-value baseline</h2>
+      <div class="content method-copy">
+        <p>TETHER starts from the reliable leave-one-out group baseline and moves toward token-level values only when the critic improves return prediction. The mixture coefficient $\rho$ is fit by least squares and smoothed across batches.</p>
+      </div>
+      <div class="figure-shell figure-shell-wide tether-figure">
+        <a href="./static/images/tether_overview.png" target="_blank" rel="noopener" aria-label="Open the TETHER figure at full resolution">
+          <img src="./static/images/tether_overview.png" alt="TETHER adaptively mixes the leave-one-out group baseline and current token value using a coefficient rho, then computes the policy advantage from the mixed baseline.">
+        </a>
+      </div>
+      <div class="equation-panel tether-equation">
+        \[
+          \begin{aligned}
+            b^{\mathrm{TETHER}}_{i,t}
+            &= (1-\rho)b_i^{\mathrm{LOO}}+\rho V_{i,t}, \\
+            A^{\mathrm{TETHER}}_{i,t}
+            &= R_i-b^{\mathrm{TETHER}}_{i,t}.
+          \end{aligned}
+        \]
+        <div class="rho-scale">
+          <span><strong>$\rho=0$</strong><br>group baseline</span>
+          <span class="rho-line"></span>
+          <span><strong>$\rho=1$</strong><br>value baseline</span>
+        </div>
+      </div>
+      <div class="tether-note">
+        <strong>No own-return leakage.</strong> Each batch uses the mixture coefficient fixed before that batch; its completed returns update $\rho$ only for the next batch.
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft" id="experiments">
+    <div class="container is-max-desktop">
+      <p class="section-eyebrow">EXPERIMENTS</p>
+      <h2 class="title is-3">Reasoning tasks and privileged context</h2>
+      <p class="experiment-lead">PVF is evaluated across three environments. TETHER uses the same suite, omits no-group Reasoning Gym, and adds MiniF2F.</p>
+      <div class="environment-grid">
+        <article class="environment-card">
+          <span class="environment-tag">PVF + TETHER</span>
+          <h3>Reasoning Gym</h3>
+          <p>A weighted mixture of procedural, single-turn reasoning tasks.</p>
+          <div class="privilege-line"><strong>PVF clue:</strong> ground-truth answer</div>
+        </article>
+        <article class="environment-card">
+          <span class="environment-tag">PVF + TETHER</span>
+          <h3>CodeIO</h3>
+          <p>Single-turn program reasoning from inputs to outputs and outputs to feasible inputs.</p>
+          <div class="privilege-line"><strong>PVF clue:</strong> leave-one-out responses and rewards</div>
+        </article>
+        <article class="environment-card">
+          <span class="environment-tag">PVF + TETHER</span>
+          <h3>Sudoku</h3>
+          <p>A multi-turn environment where the policy reasons and fills one missing grid cell per turn.</p>
+          <div class="privilege-line"><strong>PVF clue:</strong> complete solved grid</div>
+        </article>
+        <article class="environment-card mini-card">
+          <span class="environment-tag tether-tag">TETHER ADDITION</span>
+          <h3>MiniF2F</h3>
+          <p>A multi-turn Lean formal-mathematics task with compiler feedback across attempts.</p>
+          <div class="privilege-line"><strong>Baseline:</strong> adaptive group-value mixture</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section results-section" id="results">
+    <div class="container is-widescreen">
+      <p class="section-eyebrow">RESULTS</p>
+      <h2 class="title is-3">Training rewards</h2>
+      <div class="result-summary-grid">
+        <article class="result-summary pvf-summary">
+          <strong>PVF</strong>
+          <p>Best performing method in all four PVF settings.</p>
+        </article>
+        <article class="result-summary tether-summary">
+          <strong>TETHER</strong>
+          <p>Improves over the ordinary value baseline in all four TETHER settings.</p>
+        </article>
+      </div>
+
+      <figure class="result-figure">
+        <a href="./static/images/pvf_training_rewards.png" target="_blank" rel="noopener" aria-label="Open the privileged value function training-reward plot at full resolution">
+          <img src="./static/images/pvf_training_rewards.png" alt="Four seed-averaged reward curves comparing mean, ordinary value function, and privileged value function baselines on Reasoning Gym at K equals 1 and K equals 8, CodeIO, and Sudoku.">
+        </a>
+        <figcaption><strong>Privileged Value Functions.</strong> Seed-averaged, EMA-smoothed training reward; shading is one standard deviation. Reasoning Gym uses two seeds; CodeIO and Sudoku use three.</figcaption>
+      </figure>
+
+      <figure class="result-figure">
+        <a href="./static/images/tether_training_rewards.png" target="_blank" rel="noopener" aria-label="Open the TETHER training-reward plot at full resolution">
+          <img src="./static/images/tether_training_rewards.png" alt="Four seed-averaged reward curves comparing mean, ordinary value function, and TETHER baselines on Reasoning Gym, CodeIO, Sudoku, and MiniF2F.">
+        </a>
+        <figcaption><strong>TETHER.</strong> Seed-averaged, EMA-smoothed training reward; shading is one standard deviation. Reasoning Gym uses two seeds; CodeIO, Sudoku, and MiniF2F use three.</figcaption>
+      </figure>
+
+      <h3 class="title is-4 aggregate-heading">Final-window comparison</h3>
+      <figure class="result-figure aggregate-figure">
+        <a href="./static/images/final_reward_comparison.png" target="_blank" rel="noopener" aria-label="Open the final-reward comparison at full resolution">
+          <img src="./static/images/final_reward_comparison.png" alt="Bar charts of mean reward over the last 50 policy steps for PVF and TETHER experiments, comparing group mean, ordinary value function, PVF, and TETHER baselines.">
+        </a>
+        <figcaption>Mean raw reward over the final 50 policy steps, averaged within seed and then across seeds. Error bars show one standard deviation across per-seed means.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section closing-section">
+    <div class="container is-max-desktop has-text-centered">
+      <p class="closing-kicker">LE CRITIQUE</p>
+      <h2 class="title is-3">Use more information where it is safe: in the critic.</h2>
+      <p>PVF strengthens token-level baselines with admissible context. TETHER keeps value functions connected to a reliable group baseline while the critic learns.</p>
+      <div class="publication-links closing-links">
+        <span class="link-block"><a href="https://arxiv.org/abs/2608.16739" class="button is-rounded is-dark">Read the paper</a></span>
+        <span class="link-block"><a href="https://github.com/HyperPotatoNeo/prime-values" class="button is-rounded is-light">Explore the code</a></span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered footer-icons">
+      <a class="icon-link" href="https://arxiv.org/pdf/2608.16739" aria-label="Paper PDF"><i class="fas fa-file-pdf"></i></a>
+      <a class="icon-link" href="https://github.com/HyperPotatoNeo/prime-values" aria-label="Prime Values code"><i class="fab fa-github"></i></a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-centered footer-copy">
+          <p>This site is adapted from the <a href="https://rsa-llm.github.io/">RSA project page</a> and the <a href="https://github.com/nerfies/nerfies.github.io">Nerfies template</a>.</p>
+          <p>Site content is licensed under <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
