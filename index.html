@@ -138,8 +138,8 @@
           <p class="section-eyebrow">OVERVIEW</p>
           <h2 class="title is-3">Stronger critics for LLM reinforcement learning</h2>
           <div class="content has-text-justified lead-copy">
-            <p>Group-relative methods such as GRPO avoid a learned critic, but they provide only sequence-level credit and require multiple rollouts per prompt. Learned value functions offer token-level advantages, yet a poorly fit critic can make training worse.</p>
-            <p><strong>Le Critique</strong> develops two complementary strategies: <span class="pvf-text">Privileged Value Functions (PVF)</span> give the critic useful context hidden from the policy, while <span class="tether-text">TETHER</span> adapts between the dependable group baseline and the learned token-level value baseline.</p>
+            <p>Group-relative methods such as GRPO avoid a learned critic, but they provide only sequence-level credit and require multiple rollouts per prompt. Learned value functions offer token-level advantages, but a poorly fit critic can make training worse.</p>
+            <p><strong>Le Critique</strong> develops two complementary strategies: <span class="pvf-text">Privileged Value Functions (PVF)</span> give the critic useful context hidden from the policy, while <span class="tether-text">TETHER</span> adaptively interpolates between the dependable group baseline and the learned token-level value baseline.</p>
           </div>
         </div>
       </div>
@@ -148,14 +148,14 @@
           <article class="contribution-card pvf-card">
             <span class="method-number">01</span>
             <h3>Privileged Value Functions</h3>
-            <p>Route admissible training-time information through the critic to improve return prediction and reduce policy-gradient variance.</p>
+            <p>Route admissible training-time information through the critic to improve value estimation and reduce policy-gradient variance.</p>
           </article>
         </div>
         <div class="column">
           <article class="contribution-card tether-card">
             <span class="method-number">02</span>
             <h3>TETHER</h3>
-            <p>Fit an adaptive mixture of leave-one-out group and learned value baselines so the critic contributes only as much as its accuracy warrants.</p>
+            <p>Fit an adaptive mixture of leave-one-out group mean and learned value baselines so the critic contributes only as much as its accuracy warrants.</p>
           </article>
         </div>
       </div>
@@ -229,7 +229,7 @@
         <article class="comparison-card pvf-compare">
           <span class="comparison-label">PVF</span>
           <h3>Privileged critic</h3>
-          <p>The extra information conditions an auxiliary value model. Under the admissibility condition and Monte Carlo advantages, it can reduce variance without changing the expected policy gradient or the original RL optimum.</p>
+          <p>The extra information is used to condition a value function. Under the admissibility condition and with Monte Carlo advantages, it can reduce variance without changing the expected policy gradient or the original RL optimum.</p>
           <p class="tradeoff"><strong>Tradeoff:</strong> it cannot use feedback generated from the completed response itself.</p>
         </article>
         <article class="comparison-card distill-compare">
@@ -247,7 +247,7 @@
       <p class="section-eyebrow tether-text">METHOD 2</p>
       <h2 class="title is-3">TETHER: an adaptive group-value baseline</h2>
       <div class="content method-copy">
-        <p>TETHER starts from the reliable leave-one-out group baseline and moves toward token-level values only when the critic improves return prediction. The mixture coefficient $\rho$ is fit by least squares and smoothed across batches.</p>
+        <p>TETHER starts from the reliable leave-one-out group baseline and moves toward token-level value estimates only when the critic improves return prediction. The mixture coefficient $\rho$ is fit by least squares to minimize return prediction and smoothed across batches.</p>
       </div>
       <div class="figure-shell figure-shell-wide tether-figure">
         <a href="./static/images/tether_overview.png" target="_blank" rel="noopener" aria-label="Open the TETHER figure at full resolution">
@@ -351,7 +351,7 @@
   <section class="section closing-section">
     <div class="container is-max-desktop has-text-centered">
       <p class="closing-kicker">LE CRITIQUE</p>
-      <h2 class="title is-3">Use more information where it is safe: in the critic.</h2>
+      <h2 class="title is-3">Value functions help, when used correctly</h2>
       <p>PVF strengthens token-level baselines with admissible context. TETHER keeps value functions connected to a reliable group baseline while the critic learns.</p>
       <div class="publication-links closing-links">
         <span class="link-block"><a href="https://arxiv.org/abs/2608.16739" class="button is-rounded is-dark">Read the paper</a></span>
